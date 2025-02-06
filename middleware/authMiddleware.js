@@ -9,7 +9,7 @@ const authenticateJWT = (req, res, next) => {
       .json({ success: false, message: "Access denied. No token provided." });
   }
 
-  const token = authHeader.split(" ")[1]; // Extract token after "Bearer "
+  const token = authHeader.split(" ")[1];
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {

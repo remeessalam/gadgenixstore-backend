@@ -34,12 +34,11 @@ const addToCart = async (req, res) => {
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      // Create new cart if it does not exist
       cart = new Cart({
         userId,
         products: [
           {
-            id: product.id, // Ensure correct field name
+            id: product.id,
             name: product.name,
             price: product.price,
             image: product.image,
@@ -88,15 +87,17 @@ const addToCart = async (req, res) => {
 
 const removeFromCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.user.id });
-    if (!cart) return res.status(404).json({ message: "Cart not found" });
+    const { productId } = req.params;
 
-    cart.products = cart.products.filter(
-      (p) => p.productId !== req.params.productId
-    );
+    const cart = await Cart.findOne({ userId: req.user.id });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+    cart.products = cart.products.filter((p) => p.id.toString() !== productId);
     await cart.save();
-    res.json(cart);
+    res.json({ success: true, cart });
   } catch (err) {
+    console.error("Error removing from cart:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

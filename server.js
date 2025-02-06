@@ -18,21 +18,17 @@ app.use(
   })
 );
 
-// Middleware
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("Hello from the server!");
 });
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 
-// Error Handling
 app.use(errorHandler);
 
-// Start Server
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
