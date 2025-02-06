@@ -8,7 +8,7 @@ const authenticateJWT = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.get("/", authenticateJWT, getCart);
+router.get("/:id", authenticateJWT, getCart);
 router.post("/", authenticateJWT, addToCart);
 router.delete("/:productId", authenticateJWT, removeFromCart);
 
