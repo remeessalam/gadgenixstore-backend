@@ -83,7 +83,7 @@ const login = async (req, res) => {
   }
 };
 
-const getUser = async () => {
+const getUser = async (req, res) => {
   const { id } = req.body;
   console.log(req.body);
   try {
@@ -103,5 +103,56 @@ const getUser = async () => {
       .json({ success: false, message: "Server error", error: err.message });
   }
 };
+const addaddress = async (req, res) => {
+  try {
+    const { data, userId } = req.body;
+    const { name, email, country, street, city, state, zip, phone, notes } =
+      data;
+    console.log(req.body);
+    if (
+      !userId ||
+      !name ||
+      !email ||
+      !country ||
+      !street ||
+      !city ||
+      !state ||
+      !zip ||
+      !phone
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: "All required fields must be provided",
+      });
+    }
 
-module.exports = { signup, login, getUser };
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    const newAddress = {
+      name,
+      email,
+      country,
+      street,
+      city,
+      state,
+      zip,
+      phone,
+      notes: notes || "",
+    };
+
+    user.addresses.push(newAddress);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Address added successfully", user });
+  } catch (error) {
+    console.error("Error adding address:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+module.exports = { signup, login, getUser, addaddress };

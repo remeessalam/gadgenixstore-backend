@@ -87,18 +87,22 @@ const addToCart = async (req, res) => {
 
 const removeFromCart = async (req, res) => {
   try {
-    const { productId } = req.params;
-
-    const cart = await Cart.findOne({ userId: req.user.id });
+    const { productId, userID } = req.body;
+    // console.log(req, req.user.id);
+    const cart = await Cart.findOne({ userId: userID });
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
     }
-    cart.products = cart.products.filter((p) => p.id.toString() !== productId);
+    cart.products = cart.products.filter((p) => p._id.toString() !== productId);
     await cart.save();
     res.json({ success: true, cart });
   } catch (err) {
     console.error("Error removing from cart:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
   }
 };
 

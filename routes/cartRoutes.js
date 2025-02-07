@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.get("/:id", authenticateJWT, getCart);
 router.post("/", authenticateJWT, addToCart);
-router.delete("/:productId", authenticateJWT, removeFromCart);
+router.post("/removecart", authenticateJWT, removeFromCart);
 
 module.exports = router;
