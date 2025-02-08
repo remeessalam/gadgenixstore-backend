@@ -3,7 +3,6 @@ const Cart = require("../models/Cart");
 const getCart = async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log("Fetching cart for userID:", userId);
 
     const cart = await Cart.findOne({ userId });
 
@@ -24,7 +23,6 @@ const getCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const { userId, product } = req.body;
-    console.log(req.body);
     if (!userId || !product || !product.id) {
       return res
         .status(400)
@@ -53,7 +51,6 @@ const addToCart = async (req, res) => {
         (p) => p.id == product.id && p.color === product.color
       );
 
-      console.log(existingProduct);
       if (existingProduct) {
         existingProduct.quantity += product.quantity;
       } else {
@@ -69,7 +66,6 @@ const addToCart = async (req, res) => {
 
       await cart.save();
     }
-    console.log(cart, "asdfasdf");
     return res.status(200).json({
       success: true,
       message: "Product added to cart successfully",
@@ -88,7 +84,6 @@ const addToCart = async (req, res) => {
 const removeFromCart = async (req, res) => {
   try {
     const { productId, userID } = req.body;
-    // console.log(req, req.user.id);
     const cart = await Cart.findOne({ userId: userID });
     if (!cart) {
       return res

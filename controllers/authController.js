@@ -47,7 +47,7 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-
+  console.log(email, password);
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -84,31 +84,39 @@ const login = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { id } = req.body;
-  console.log(req.body);
+  const { userId } = req.body;
+
+  console.log("Received User ID:", userId);
+
   try {
-    const user = await User.findOne({ id });
-    if (!user)
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
+    }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.json({ success: true, user: user?.fullName });
+    res.json({ success: true, user });
   } catch (err) {
+    console.error("Error fetching user:", err);
     res
       .status(500)
       .json({ success: false, message: "Server error", error: err.message });
   }
 };
+
 const addaddress = async (req, res) => {
   try {
     const { data, userId } = req.body;
     const { name, email, country, street, city, state, zip, phone, notes } =
       data;
-    console.log(req.body);
     if (
       !userId ||
       !name ||
@@ -154,5 +162,30 @@ const addaddress = async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
+const deleteaddress = async (req, res) => {
+  const { userId, addressId } = req.params;
 
-module.exports = { signup, login, getUser, addaddress };
+  try {
+    // Find the user and remove the address
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { addresses: { _id: addressId } } }, // Remove address by ID
+      { new: true } // Return updated user
+    );
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, message: "Address deleted successfully", user });
+  } catch (err) {
+    console.error("Error deleting address:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
+  }
+};
+
+module.exports = { signup, login, getUser, addaddress, deleteaddress };
