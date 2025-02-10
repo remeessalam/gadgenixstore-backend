@@ -17,11 +17,19 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: ["https://gadgenixstore-omega.vercel.app", "http://localhost:5173"],
+  origin: (origin, callback) => {
+    // If there is no origin (e.g. non-browser requests), allow it.
+    if (!origin) return callback(null, true);
+    // Otherwise, echo back the origin from the request.
+    // This allows requests from any origin while using credentials.
+    return callback(null, origin);
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+
+console.log("refresh");
 app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
