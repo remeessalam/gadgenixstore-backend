@@ -16,21 +16,8 @@ const PORT = 8080;
 app.use(express.json());
 app.use(bodyParser.json());
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    // If no origin is present (non-browser request), allow it.
-    if (!origin) return callback(null, true);
-    // Otherwise, allow the request from the incoming origin.
-    return callback(null, origin);
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
-
-console.log("refresh");
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use(cors({ origin: true, credentials: true }));
+app.options("*", cors({ origin: true, credentials: true }));
 
 app.get("/", (req, res) => {
   res.send("Hello from the server!");
