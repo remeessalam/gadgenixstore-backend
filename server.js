@@ -12,18 +12,17 @@ const serverless = require("serverless-http");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+app.use(express.json());
+app.use(bodyParser.json());
 
 const corsOptions = {
-  // origin: ["https://copymudralanka-react.vercel.app", "http://localhost:3000"], // Replace with your frontend domain
-  origin: ["https://gadgenixstore-backend.vercel.app", "http://localhost:8080"], // Replace with your frontend domain
+  origin: ["https://gadgenixstore-omega.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // Allow cookies if needed
+  credentials: true,
 };
 console.log("refresh");
-app.use(cors(corsOptions)); // Use CORS with options
-
-app.use(bodyParser.json());
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Hello from the server!");
