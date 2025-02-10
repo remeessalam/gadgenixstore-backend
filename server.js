@@ -22,7 +22,6 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
-console.log("refresh");
 app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
