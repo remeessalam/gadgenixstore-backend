@@ -15,7 +15,13 @@ const PORT = process.env.PORT || 8080;
 
 app.use(
   cors({
-    origin: "https://gadgenixstore-backend.vercel.app/",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      // Reflect the request origin – this allows any origin to make a request
+      callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   })
 );
