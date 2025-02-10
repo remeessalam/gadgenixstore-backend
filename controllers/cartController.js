@@ -6,10 +6,9 @@ const getCart = async (req, res) => {
 
     const cart = await Cart.findOne({ userId });
 
-    if (!cart)
-      return res
-        .status(404)
-        .json({ success: false, message: "Cart not found" });
+    if (!cart) {
+      return res.status(200).json({ success: true, message: "Cart not found" });
+    }
 
     res.status(200).json({ success: true, cart });
   } catch (err) {
@@ -100,5 +99,24 @@ const removeFromCart = async (req, res) => {
       .json({ success: false, message: "Server error", error: err.message });
   }
 };
+const deleteCart = async (req, res) => {
+  try {
+    console.log(req.body, "asdfasdfsd");
+    const { cartId } = req.body;
+    const cart = await Cart.findOneAndDelete({ _id: cartId });
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
+    }
 
-module.exports = { getCart, addToCart, removeFromCart };
+    res.json({ success: true, message: "Cart deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting cart:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
+  }
+};
+
+module.exports = { getCart, addToCart, removeFromCart, deleteCart };
