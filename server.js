@@ -18,10 +18,9 @@ app.use(bodyParser.json());
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // If there is no origin (e.g. non-browser requests), allow it.
+    // If no origin is present (non-browser request), allow it.
     if (!origin) return callback(null, true);
-    // Otherwise, echo back the origin from the request.
-    // This allows requests from any origin while using credentials.
+    // Otherwise, allow the request from the incoming origin.
     return callback(null, origin);
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -31,6 +30,7 @@ const corsOptions = {
 
 console.log("refresh");
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Hello from the server!");
